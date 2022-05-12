@@ -1,11 +1,63 @@
-import React from 'react'
+import { useAppContext } from '../../contexts/AppContext'
+import Layout from '../../layout/layout'
+import { tabList } from './tabs';
+import TabItem from '../../component/item/tab-item';
+import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { videoPosts } from '../../data/data';
+import PostItem, { typePost } from '../../component/item/post-item';
 
+const HomePage = () => {
+  const context = useAppContext()
+  const [currentTab, setCurrentTab] = useState<number>(0)
+  const [sortOption, setSortOption] = useState<number>(0)
+  const sortType = ["Top", "Bottom", "Most Visit"]
 
-const HomePage = () =>{
-  return(
-    <div>
-      <p className='text-center text-3xl font-bold text-lime-300'>Mighty mighty Mufasa!</p>
-    </div>
+  return (
+    <Layout>
+      <div className='container flex mx-auto gap-7.5 pt-7.5 bg-app-white'>
+        <div className='xl:flex hidden 2xl:w-1/4 xl:w-1/3'>
+
+        </div>
+        <div className='w-full xl:w-2/3 2xl:w-1/2 flex-col'>
+          <div className='flex flex-col bg-white border rounded-xl border-app-gray border-opacity-60'>
+            {context.user &&
+              <div className='flex gap-4 px-3.5 py-2.5'>
+                <img src={context.user?.avatar} alt={context.user?.name} className="flex-shrink-0 w-12 h-12" />
+                <input className='px-3.5 py-3 rounded-full w-full border-opacity-60 border border-app-gray-light outline-none' placeholder='Start a post' />
+              </div>
+            }
+            <div className='flex items-center'>
+              {
+                tabList.map((tab, idx) =>
+                  <TabItem tab={tab} currentTab={currentTab} select={setCurrentTab} key={idx} />
+                )
+              }
+            </div>
+          </div>
+          <div className='flex items-center justify-center gap-2 py-4'>
+            <div className='h-px w-full bg-app-gray bg-opacity-60'></div>
+            <div className='flex gap-2'>
+              <p className='whitespace-nowrap'>Sort By:</p>
+              <button className='flex items-center justify-center gap-1'>
+                <p>{sortType[sortOption]}</p>
+                <FontAwesomeIcon icon={faCaretDown} />
+              </button>
+            </div>
+          </div>
+          <div className='space-y-7.4'>
+            {videoPosts.map((post, idx) => (
+              <PostItem {...post} key={idx} />
+            ))}
+          </div>
+        </div>
+        <div className='2xl:flex hidden w-1/4 '>
+
+        </div>
+
+      </div>
+    </Layout>
   )
 }
 

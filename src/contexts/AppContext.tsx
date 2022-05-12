@@ -6,6 +6,20 @@ interface ContextInterface {
   setLoading: any;
   auth: boolean;
   setAuth: any;
+  user: User | undefined;
+  setUser: any;
+}
+
+interface User {
+  name: string;
+  summary: string;
+  connection: number;
+  follower: number;
+  membership: string;
+  cover: string;
+  avatar: string;
+  email: string;
+  phone: string;
 }
 
 export const AppContext = createContext<ContextInterface>({
@@ -13,12 +27,14 @@ export const AppContext = createContext<ContextInterface>({
   setLoading: null,
   auth: false,
   setAuth: null,
+  user: undefined,
+  setUser: null
 });
 
 const AppContextProvider = ({ children }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [auth, setAuth] = useState<any>(false);
-
+  const [user, setUser] = useState<User>()
   return (
     <AppContext.Provider
       value={{
@@ -26,6 +42,8 @@ const AppContextProvider = ({ children }: any) => {
         setLoading,
         auth,
         setAuth,
+        user,
+        setUser
       }}
     >
       {children}
