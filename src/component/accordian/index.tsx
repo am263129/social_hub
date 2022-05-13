@@ -23,6 +23,7 @@ const Accordian = (props: typeAccordian) => {
           <div className='flex items-center justify-center px-2'>
             <img src={icon} alt='down' className={`w-3 h-3 opacity-60 transform rotate-${expand?rotate:"0"} duration-150`}/>
           </div>
+          <div className="hidden rotate-45 rotate-180"/>
         </button>
         <Expand open={expand}>
           {children}
