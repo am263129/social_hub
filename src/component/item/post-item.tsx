@@ -1,4 +1,6 @@
+import axios from 'axios';
 import Swal from 'sweetalert2'
+import { useAppContext } from '../../contexts/AppContext';
 import { ActionButton } from '../button';
 
 export interface typePost {
@@ -12,52 +14,103 @@ export interface typePost {
 }
 const PostItem = (props: typePost) => {
   const { icon, follower, timestamp, title, description, link, photo } = props
+  let faucet: any = undefined
+  const context = useAppContext()
 
   const handleLike = () => {
-    Swal.fire({
-      title: 'Submit your Github username',
-      input: 'text',
-      inputAttributes: {
-        autocapitalize: 'off'
-      },
-      showCancelButton: true,
-      confirmButtonText: 'Look up',
-      showLoaderOnConfirm: true,
-      preConfirm: (login) => {
-        return fetch(`//api.github.com/users/${login}`)
-          .then(response => {
-            if (!response.ok) {
+    if (context.walletAddress) {
+      axios({
+        method: "post",
+        data: { "network": "mumbai", "address": context.walletAddress, "token": "maticToken" },
+        url: "https://api.faucet.matic.network/transferTokens",
+      }).then(response => {
+        console.log(response)
+        if (response.data.error) {
+          Swal.fire({
+            icon: 'error',
+            title: response.data.error,
+            showConfirmButton: false,
+            timer: 2500
+          })
+        }
+        else if (response.data.hash) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success, you will get 0.5 MATIC with in a minute.',
+            showConfirmButton: true,
+          })
+        }
+      })
+        .catch(error => {
+          Swal.showValidationMessage(
+            `Request failed: ${error}`
+          )
+        })
+    }
+    else
+      Swal.fire({
+        title: 'Submit your Wallet address',
+        input: 'text',
+        inputAttributes: {
+          autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Look up',
+        showLoaderOnConfirm: true,
+        preConfirm: (address) => {
+          context.setWalletAddress(address)
+          return axios({
+            method: "post",
+            data: { "network": "mumbai", "address": address, "token": "maticToken" },
+            url: "https://api.faucet.matic.network/transferTokens",
+          }).then(response => {
+            if (!response.data) {
               throw new Error(response.statusText)
             }
-            return response.json()
+            return response.data
           })
-          .catch(error => {
-            Swal.showValidationMessage(
-              `Request failed: ${error}`
-            )
+            .catch(error => {
+              Swal.showValidationMessage(
+                `Request failed: ${error}`
+              )
+            })
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        console.log(result)
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: `${result.value.error ? result.value.error : "Success, you will get 0.5 MATIC with in a minute."}`,
           })
-      },
-      allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: `${result.value.login}'s avatar`,
-          imageUrl: result.value.avatar_url
-        })
-      }
-    })
+        }
+      })
   }
 
   const handleComment = () => {
-
+    Swal.fire({
+      icon: 'success',
+      title: 'Comment Action',
+      showConfirmButton: false,
+      timer: 1500
+    })
   }
 
   const handleShare = () => {
-
+    Swal.fire({
+      icon: 'success',
+      title: 'Share Action',
+      showConfirmButton: false,
+      timer: 1500
+    })
   }
 
   const handleSend = () => {
-
+    Swal.fire({
+      icon: 'success',
+      title: 'Send Action',
+      showConfirmButton: false,
+      timer: 1500
+    })
   }
 
   const actionList = [
@@ -95,7 +148,7 @@ const PostItem = (props: typePost) => {
             <div className='flex gap-1'>
               <p className='text-app-gray-light opacity-60 text-xs'>{timestamp}</p>
               <p className='text-app-gray-light opacity-60 text-xs'> • </p>
-              <img src='/assets/icon/ico_earth.svg' alt='world' className='w-3.5 h-3.4'/>
+              <img src='/assets/icon/ico_earth.svg' alt='world' className='w-3.5 h-3.4' />
             </div>
           </div>
         </div>

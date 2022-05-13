@@ -11,7 +11,7 @@ const Layout = (props: any) => {
       </Helmet>
       <body className="bg-app-white font-mont">
         <Header />
-        <main>
+        <main className="min-h-screen">
           {props.children}
         </main>
         <Footer />

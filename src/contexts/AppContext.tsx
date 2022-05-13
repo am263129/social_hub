@@ -8,6 +8,8 @@ interface ContextInterface {
   setAuth: any;
   user: User | undefined;
   setUser: any;
+  walletAddress: string | undefined;
+  setWalletAddress: any
 }
 
 interface User {
@@ -28,13 +30,16 @@ export const AppContext = createContext<ContextInterface>({
   auth: false,
   setAuth: null,
   user: undefined,
-  setUser: null
+  setUser: null,
+  walletAddress: undefined,
+  setWalletAddress: null
 });
 
 const AppContextProvider = ({ children }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [auth, setAuth] = useState<any>(false);
   const [user, setUser] = useState<User>()
+  const [walletAddress, setWalletAddress] = useState<string>()
   return (
     <AppContext.Provider
       value={{
@@ -43,7 +48,9 @@ const AppContextProvider = ({ children }: any) => {
         auth,
         setAuth,
         user,
-        setUser
+        setUser,
+        walletAddress,
+        setWalletAddress
       }}
     >
       {children}
